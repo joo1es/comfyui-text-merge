@@ -22,11 +22,11 @@ Restart ComfyUI. The node will appear in the node list under `utils/text`.
 
 ## Usage
 
-1. Add the node `多文案拼接 TextMerge` (`utils/text`) to your workflow.
-2. Fill in the text slots you want to use (`文案1` ~ `文案4`).
-3. Check the toggle (`启用文案N`) to include a slot, uncheck to exclude it.
-4. Set the `合并字符` (merge character), e.g. `, ` or `|`.
-5. The `合并文本` (merged text) output contains the joined result.
+1. Add the node `Text Merge` (`utils/text`) to your workflow.
+2. Fill in the text slots you want to use (`Text 1` ~ `Text 4`).
+3. Check the toggle (`Enable Text N`) to include a slot, uncheck to exclude it.
+4. Set the `Merge Char` (merge character), e.g. `, ` or `|`.
+5. The `Merged Text` output contains the joined result.
 
 Example: with slots `["a", "b", "c"]`, slot 2 disabled, and separator `|`, the output is `a|c`.
 

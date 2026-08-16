@@ -7,9 +7,9 @@ NUM_SLOTS = 4
 
 class TextMerge(io.ComfyNode):
     """
-    多文案拼接节点：
-    输入多个备选文案，每个文案可通过复选框单独启用/停用，
-    设置合并字符后，将选中的文案依次拼接输出为单个文本。
+    Text Merge node:
+    Input multiple alternative text pieces, toggle each one on/off with a checkbox,
+    set a merge separator, and output the selected texts joined into a single string.
     """
 
     @classmethod
@@ -17,27 +17,27 @@ class TextMerge(io.ComfyNode):
         inputs = [
             io.String.Input(
                 "merge_char",
-                display_name="合并字符",
+                display_name="Merge Char",
                 multiline=False,
                 default=", ",
-                tooltip="用于连接多个已启用文案的分隔字符",
+                tooltip="Separator used to join the enabled text pieces",
             )
         ]
         for i in range(1, NUM_SLOTS + 1):
             inputs.append(
                 io.Boolean.Input(
                     f"enable_{i}",
-                    display_name=f"启用文案{i}",
+                    display_name=f"Enable Text {i}",
                     default=True,
-                    label_on="启用",
-                    label_off="停用",
+                    label_on="On",
+                    label_off="Off",
                     socketless=True,
                 )
             )
             inputs.append(
                 io.String.Input(
                     f"text_{i}",
-                    display_name=f"文案{i}",
+                    display_name=f"Text {i}",
                     multiline=True,
                     default="",
                 )
@@ -45,11 +45,11 @@ class TextMerge(io.ComfyNode):
 
         return io.Schema(
             node_id="TextMerge",
-            display_name="多文案拼接 TextMerge",
+            display_name="Text Merge",
             category="utils/text",
             inputs=inputs,
             outputs=[
-                io.String.Output("text", display_name="合并文本"),
+                io.String.Output("text", display_name="Merged Text"),
             ],
         )
 
