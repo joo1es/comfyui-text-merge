@@ -1,70 +1,49 @@
-import json
-
-# Number of slots shown when the node is first created.
-# Change this to adjust the initial slot count.
+# Number of text slots. Change this to adjust the slot count.
 NUM_SLOTS = 4
-
-# Hard cap on the number of slots a node can have in the UI.
-MAX_SLOTS = 20
 
 
 class TextMerge:
     """Merge multiple alternative texts into a single string.
 
-    Slots are toggled on/off via checkboxes, a merge character separates the
-    selected texts, and a live preview is shown on the frontend. The serialized
-    slot state travels from the frontend through the hidden ``state_json``
-    widget, so the node only needs this one input.
+    Every slot is a native checkbox + multiline text pair. A merge character
+    separates the enabled texts, and up to three optional STRING inputs can be
+    wired in as well. The frontend shows a live preview of the merged result.
     """
 
     @classmethod
     def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "state_json": (
-                    "STRING",
-                    {
-                        "multiline": True,
-                        "default": "",
-                        "numSlots": NUM_SLOTS,
-                        "maxSlots": MAX_SLOTS,
-                    },
-                ),
-            },
-            "optional": {
-                "input_1": ("STRING", {"forceInput": True}),
-                "input_2": ("STRING", {"forceInput": True}),
-                "input_3": ("STRING", {"forceInput": True}),
-            },
+        required = {
+            "merge_char": ("STRING", {"multiline": False, "default": ", "}),
         }
+        for i in range(1, NUM_SLOTS + 1):
+            required[f"enable_{i}"] = ("BOOLEAN", {"default": True})
+            required[f"text_{i}"] = ("STRING", {"multiline": True, "default": ""})
+        optional = {
+            "input_1": ("STRING", {"forceInput": True}),
+            "input_2": ("STRING", {"forceInput": True}),
+            "input_3": ("STRING", {"forceInput": True}),
+        }
+        return {"required": required, "optional": optional}
 
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "merge"
+    OUTPUT_NODE = True
     CATEGORY = "utils/text"
 
-    def merge(self, state_json, input_1="", input_2="", input_3=""):
-        try:
-            state = json.loads(state_json)
-        except Exception:
-            state = {}
-        if not isinstance(state, dict):
-            state = {}
-        merge_char = state.get("merge_char", ", ")
-        slots = state.get("slots", [])
+    def merge(self, merge_char, **kwargs):
         parts = []
-        for slot in slots:
-            if not isinstance(slot, dict):
-                continue
-            if not slot.get("enabled"):
-                continue
-            text = slot.get("text", "")
-            if isinstance(text, str) and text.strip():
+        for i in range(1, NUM_SLOTS + 1):
+            enabled = kwargs.get(f"enable_{i}", True)
+            text = kwargs.get(f"text_{i}", "")
+            if enabled and isinstance(text, str) and text.strip():
                 parts.append(text)
-        for inp in (input_1, input_2, input_3):
-            if isinstance(inp, str) and inp.strip():
-                parts.append(inp)
-        return (merge_char.join(parts),)
+        for key in ("input_1", "input_2", "input_3"):
+            value = kwargs.get(key, "")
+            if isinstance(value, str) and value.strip():
+                parts.append(value)
+        merged = merge_char.join(parts)
+        return {"ui": {"text": [merged]}, "result": (merged,)}
 
 
 NODE_CLASS_MAPPINGS = {"TextMerge": TextMerge}
