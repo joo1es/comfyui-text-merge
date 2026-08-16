@@ -4,10 +4,12 @@ A simple [ComfyUI](https://github.com/Comfy-Org/ComfyUI) custom node that lets y
 
 ## Features
 
-- Up to 4 text slots (configurable), each with its own **Enable/Disable** toggle
-- A **merge character** field to set the separator between enabled texts
-- Only enabled, non-empty texts are joined
-- Single **String** output with the final concatenated text
+- **Dynamic text slots**: add/remove text slots on the fly with the `+ Add` / `×` buttons (up to `MAX_SLOTS`).
+- Each slot has its own **Enable/Disable** checkbox; only enabled, non-empty texts are joined.
+- A **merge character** field sets the separator between the selected texts.
+- **Live preview** inside the node updates the merged result as you type.
+- **Three optional STRING inputs** (`input_1` ~ `input_3`): connect other nodes' text and it is merged into the output too (after the slots).
+- Single **String** output with the final concatenated text.
 
 ## Installation
 
@@ -23,14 +25,21 @@ Restart ComfyUI. The node will appear in the node list under `utils/text`.
 ## Usage
 
 1. Add the node `Text Merge` (`utils/text`) to your workflow.
-2. Fill in the text slots you want to use (`Text 1` ~ `Text 4`).
-3. Check the toggle (`Enable Text N`) to include a slot, uncheck to exclude it.
-4. Set the `Merge Char` (merge character), e.g. `, ` or `|`.
-5. The `Merged Text` output contains the joined result.
+2. Fill in the text slots you want to use, and check the toggle (`Enable Text N`) to include a slot, uncheck to exclude it.
+3. Use `+ Add` to create more slots and `×` to remove a slot.
+4. Set the `Merge Char` (merge character), e.g. `, ` or `|`. The `Preview` area shows the merged result live.
+5. Optionally connect other text nodes to `input_1` ~ `input_3`; their text is appended to the merged output.
+6. The `text` output contains the joined result.
 
-Example: with slots `["a", "b", "c"]`, slot 2 disabled, and separator `|`, the output is `a|c`.
+Example: slots `["a", "b", "c"]` with slot 2 disabled, `input_1 = "x"`, and separator `|` produces `a|c|x`.
+
+## Configuration
+
+- `NUM_SLOTS` in `__init__.py`: number of slots shown when the node is first created.
+- `MAX_SLOTS` in `__init__.py`: hard cap on how many slots a node can have.
+
+The values are forwarded to the frontend automatically; just restart ComfyUI after editing.
 
 ## Customization
 
-- To change the number of text slots, edit `NUM_SLOTS` in `__init__.py`.
-- Dynamic add/remove of slots, or a real-time preview in the frontend, can be added on request.
+Dynamic add/remove of slots and the real-time frontend preview are built in. Need different slot behavior, more optional inputs, or other tweaks? Feel free to ask.
