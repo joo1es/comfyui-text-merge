@@ -7,7 +7,7 @@ class TextMerge:
 
     Every slot is a native checkbox + multiline text pair. A merge character
     separates the enabled texts, and up to three optional STRING inputs can be
-    wired in as well. The frontend shows a live preview of the merged result.
+    wired in as well.
     """
 
     @classmethod
@@ -28,7 +28,6 @@ class TextMerge:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "merge"
-    OUTPUT_NODE = True
     CATEGORY = "utils/text"
 
     def merge(self, merge_char, **kwargs):
@@ -42,13 +41,10 @@ class TextMerge:
             value = kwargs.get(key, "")
             if isinstance(value, str) and value.strip():
                 parts.append(value)
-        merged = merge_char.join(parts)
-        return {"ui": {"text": [merged]}, "result": (merged,)}
+        return (merge_char.join(parts),)
 
 
 NODE_CLASS_MAPPINGS = {"TextMerge": TextMerge}
 NODE_DISPLAY_NAME_MAPPINGS = {"TextMerge": "Text Merge"}
 
-WEB_DIRECTORY = "./web"
-
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
+__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
